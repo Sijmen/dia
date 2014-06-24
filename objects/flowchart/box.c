@@ -84,7 +84,7 @@ static void box_select(Box *box, Point *clicked_point,
 		       DiaRenderer *interactive_renderer);
 static ObjectChange* box_move_handle(Box *box, Handle *handle,
 				     Point *to, ConnectionPoint *cp,
-				     HandleMoveReason reason, 
+				     HandleMoveReason reason,
 			    ModifierKeys modifiers);
 static ObjectChange* box_move(Box *box, Point *to);
 static void box_draw(Box *box, DiaRenderer *renderer);
@@ -156,7 +156,7 @@ static PropDescription box_props[] = {
   PROP_STD_TEXT_ALIGNMENT,
   PROP_STD_TEXT_FITTING,
   PROP_STD_SAVED_TEXT,
-  
+
   { NULL, 0, 0, NULL, NULL, NULL, 0}
 };
 
@@ -307,7 +307,7 @@ static ObjectChange*
 box_move(Box *box, Point *to)
 {
   box->element.corner = *to;
-  
+
   box_update_data(box, ANCHOR_MIDDLE, ANCHOR_MIDDLE);
 
   return NULL;
@@ -320,7 +320,7 @@ box_draw(Box *box, DiaRenderer *renderer)
   Point lr_corner;
   Element *elem;
   real radius;
-  
+
   assert(box != NULL);
   assert(renderer != NULL);
   elem = &box->element;
@@ -330,7 +330,7 @@ box_draw(Box *box, DiaRenderer *renderer)
 
   if (box->show_background)
     renderer_ops->set_fillstyle(renderer, FILLSTYLE_SOLID);
-  
+
   renderer_ops->set_linewidth(renderer, box->border_width);
   renderer_ops->set_linestyle(renderer, box->line_style, box->dashlength);
   renderer_ops->set_linejoin(renderer, LINEJOIN_MITER);
@@ -420,7 +420,7 @@ box_update_data(Box *box, AnchorShape horiz, AnchorShape vert)
   radius = MIN(radius, elem->width/2);
   radius = MIN(radius, elem->height/2);
   radius *= (1-M_SQRT1_2);
-  
+
   /* Update connections: */
   connpoint_update(&box->connections[0],
 		    elem->corner.x + radius,
@@ -493,9 +493,9 @@ box_update_data(Box *box, AnchorShape horiz, AnchorShape vert)
 
   extra->border_trans = box->border_width / 2.0;
   element_update_boundingbox(elem);
-  
+
   obj->position = elem->corner;
-  
+
   element_update_handles(elem);
 
   if (radius > 0.0) {
@@ -530,7 +530,7 @@ box_create(Point *startpoint,
   box = g_malloc0(sizeof(Box));
   elem = &box->element;
   obj = &elem->object;
-  
+
   obj->type = &fc_box_type;
 
   obj->ops = &box_ops;
@@ -555,9 +555,9 @@ box_create(Point *startpoint,
   box->text = new_text("", font, font_height, &p, &box->border_color,
                        ALIGN_CENTER);
   dia_font_unref(font);
-  
+
   /* new default: let the user decide the size */
-  box->text_fitting = TEXTFIT_ALWAYS;
+  box->text_fitting = TEXTFIT_WHEN_NEEDED;
 
   element_init(elem, 8, NUM_CONNECTIONS);
 
@@ -572,7 +572,7 @@ box_create(Point *startpoint,
   box_update_data(box, ANCHOR_MIDDLE, ANCHOR_MIDDLE);
 
   *handle1 = NULL;
-  *handle2 = obj->handles[7];  
+  *handle2 = obj->handles[7];
   return &box->element.object;
 }
 
@@ -592,22 +592,22 @@ box_save(Box *box, ObjectNode obj_node, DiaContext *ctx)
   if (box->border_width != 0.1)
     data_add_real(new_attribute(obj_node, "border_width"),
 		  box->border_width, ctx);
-  
+
   if (!color_equals(&box->border_color, &color_black))
     data_add_color(new_attribute(obj_node, "border_color"),
 		   &box->border_color, ctx);
-   
+
   if (!color_equals(&box->inner_color, &color_white))
     data_add_color(new_attribute(obj_node, "inner_color"),
 		   &box->inner_color, ctx);
-  
-  data_add_boolean(new_attribute(obj_node, "show_background"), 
+
+  data_add_boolean(new_attribute(obj_node, "show_background"),
                    box->show_background, ctx);
 
   if (box->line_style != LINESTYLE_SOLID)
     data_add_enum(new_attribute(obj_node, "line_style"),
 		  box->line_style, ctx);
-  
+
   if (box->line_style != LINESTYLE_SOLID &&
       box->dashlength != DEFAULT_LINESTYLE_DASHLEN)
     data_add_real(new_attribute(obj_node, "dashlength"),
@@ -637,7 +637,7 @@ box_load(ObjectNode obj_node, int version,DiaContext *ctx)
   box = g_malloc0(sizeof(Box));
   elem = &box->element;
   obj = &elem->object;
-  
+
   obj->type = &fc_box_type;
   obj->ops = &box_ops;
 
@@ -651,12 +651,12 @@ box_load(ObjectNode obj_node, int version,DiaContext *ctx)
   attr = object_find_attribute(obj_node, "border_color");
   if (attr != NULL)
     data_color(attribute_first_data(attr), &box->border_color, ctx);
-  
+
   box->inner_color = color_white;
   attr = object_find_attribute(obj_node, "inner_color");
   if (attr != NULL)
     data_color(attribute_first_data(attr), &box->inner_color, ctx);
-  
+
   box->show_background = TRUE;
   attr = object_find_attribute(obj_node, "show_background");
   if (attr != NULL)
